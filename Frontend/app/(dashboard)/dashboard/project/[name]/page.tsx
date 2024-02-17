@@ -16,6 +16,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useEffect, useState } from "react";
+import { Livecpu } from "@/components/livecpu";
 // import { BarChart, Bar,Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 
@@ -26,10 +27,11 @@ interface ChartData {
 
 export default function page({ params }: { params: { name: string } }) {
   const [container, setContainer] = useState({})
-  
 
   useEffect(() => {
-    fetch(`http://127.0.0.1:5000/api/items/${params.name}`)
+    setInterval(()=>{
+
+      fetch(`http://127.0.0.1:5000/api/items/${params.name}`)
       .then((response) => response.json())
       .then((data) => {
         // console.log(newList);
@@ -39,6 +41,9 @@ export default function page({ params }: { params: { name: string } }) {
         console.error("Error fetching data:", error);
         // Handle the error appropriately, e.g., display an error message to the user
       });
+
+    },3000)
+    
 
   }, [])
   
@@ -173,7 +178,7 @@ export default function page({ params }: { params: { name: string } }) {
                   <CardTitle>Overview</CardTitle>
                 </CardHeader>
                 <CardContent className="pl-2">
-                  <Overview />
+                 <Livecpu/>
                 </CardContent>
               </Card>
               <Card className="col-span-4 md:col-span-3">
