@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, Response, stream_with_context, json
 import docker
 import subprocess
 import os
@@ -17,7 +17,6 @@ data = [
 # Routes
 
 random_number = 3000
-
 
 #Get Stats
 @app.route('/api/items/<string:container_id>', methods=['GET'])
@@ -88,6 +87,48 @@ def delete_item(item_id):
     global data
     data = [item for item in data if item['id'] != item_id]
     return jsonify({"message": "Item deleted successfully"})
+
+
+@app.route('/api/send_mail', methods = ["POST"])
+def send_email():
+    smtp_server = 'smtp.gmail.com'
+    smtp_port = 587
+    smtp_username = 'vm5503@gmail.com'
+    smtp_password = 'zztm jcvd hlyj cxaz'
+
+    data = request.json
+
+    to_email = data.get('to_email')
+    subject = data.get('subject')
+    body = data.get('body')
+    attachment = data.get('attachment')
+
+    msg = MIMEMultipart()
+    msg['From'] = smtp_username
+    msg['To'] = to_email
+    msg['Subject'] = subject
+
+    msg.attach(MIMEText(body, 'plain'))
+
+    if attachment:
+        with open(attachment, 'rb') as file:
+            attach_part = MIMEApplication(file.read(), Name=attachment)
+        attach_part['Content-Disposition'] = f'attachment; filename="{attachment}"'
+        msg.attach(attach_part)
+
+    try:
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.ehlo()
+        server.starttls()
+        server.ehlo()
+        server.login(smtp_username, smtp_password)
+        server.sendmail(smtp_username, to_email, msg.as_string())
+        server.quit()
+        print(f"Email sent to {to_email}")
+        return jsonify("Asian"), 201
+    except Exception as e:
+        print(f"Failed to send email to {to_email}: {str(e)}")
+        return jsonify("Not Asian"), 201
 
 if __name__ == '__main__':
     app.run(debug=True)
