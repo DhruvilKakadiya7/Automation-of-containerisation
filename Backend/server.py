@@ -1,7 +1,9 @@
 from flask import Flask, jsonify, request
 import docker
 import subprocess
-
+import os
+import re
+import random
 
 app = Flask(__name__)
 
@@ -14,6 +16,8 @@ data = [
 
 # Routes
 
+random_number = 3000
+
 
 #Get Stats
 @app.route('/api/items/<string:container_id>', methods=['GET'])
@@ -24,16 +28,51 @@ def get_stats(container_id):
     return jsonify(cpu_stats)
 
 #Given a repo link, host it
-@app.route('/api/items', methods=['POST'])
+@app.route('/api/create_website', methods=['POST'])
 def create_item():
-
-    subprocess.run(['chmod', '+x', 'temp_script.sh'])
-    subprocess.run(['./temp_script.sh'])
+    global random_number
+    data = request.json    
+    repo_url = data.get('rep_url')
+    repo_name = re.search(r'\/([^\/]+)\/?$', repo_url).group(1).lower()
+    container_name = f"{repo_name}_container".lower()
+    image_tag = f"{repo_name}_image".lower()
+    port_mapping = f"127.0.0.1:{random_number}:{random_number}"  # You can adjust this as needed
+    random_number += 1
+    bash_script =  f"""#!/bin/bash
     
-    new_item = request.json
+# Variables
+REPOSITORY_NAME="{repo_name}" # Name your local Docker image
+IMAGE_TAG="{image_tag}" # Tag for your Docker image
+GITHUB_REPO_URL="{repo_url}" # GitHub Repository URL
+CONTAINER_NAME="{container_name}" # Name for your local container
+PORT_MAPPING="{port_mapping}" # Local:Container port mapping (adjust as needed)
+    
+# Clone the GitHub repository
+git clone $GITHUB_REPO_URL repo_dir
+cd repo_dir
+    
+# Build your Docker image (assuming the Dockerfile is in the root of the repo)
+docker build -t $REPOSITORY_NAME:$IMAGE_TAG .
+    
+# Run your Docker container
+docker run -d --name $CONTAINER_NAME -p $PORT_MAPPING $REPOSITORY_NAME:$IMAGE_TAG
+    
+# Clean up (optional)
+cd ..
+rm -rf repo_dir
+    """
+    
+    # Write the bash script to a temporary file
+    with open('temp_script.sh', 'w') as f:
+        f.write(bash_script)
+    
+    # Set execute permissions
+    subprocess.run(['chmod', '+x', 'temp_script.sh'])
+    
+    # Execute the bash script
+    subprocess.run(['./temp_script.sh'])
 
-    data.append(new_item)
-    return jsonify(new_item), 201
+    return jsonify("Hello"), 201
 
 @app.route('/api/items/<int:item_id>', methods=['PUT'])
 def update_item(item_id):
