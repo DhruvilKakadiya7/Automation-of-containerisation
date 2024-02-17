@@ -30,7 +30,7 @@ data = [
 
 # Routes
 
-random_number = 3000
+random_number = random.randint(3000, 4999)
 
 #Get Stats
 @app.route('/api/items/<string:container_id>', methods=['GET'])
@@ -53,7 +53,7 @@ def create_item():
     global random_number
     data = request.json    
     repo_url = data.get('rep_url')
-    repo_name = re.search(r'\/([^\/]+)\/?$', repo_url).group(1).lower()
+    repo_name = re.search(r'\/([^\/]+)\/?$', repo_url).group(1).lower() + str(random_number )
     container_name = f"{repo_name}_container".lower()
     image_tag = f"{repo_name}_image".lower()
     port_mapping = f"127.0.0.1:{random_number}:{random_number}"  # You can adjust this as needed
@@ -94,10 +94,10 @@ rm -rf repo_dir
         f.write(bash_script)
     
     # Set execute permissions
-    subprocess.run(['chmod', '+x', 'temp_script.sh'])
+    subprocess.run(['chmod', '+x', 'temp_script.sh'],shell=True)
     
     # Execute the bash script
-    subprocess.run(['./temp_script.sh'])
+    subprocess.run(['temp_script.sh'],shell=True)
 
     return jsonify("Hello"), 201
 

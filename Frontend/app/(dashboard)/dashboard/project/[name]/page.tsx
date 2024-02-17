@@ -27,10 +27,11 @@ interface ChartData {
 
 export default function page({ params }: { params: { name: string } }) {
   const [container, setContainer] = useState({})
-  
 
   useEffect(() => {
-    fetch(`http://127.0.0.1:5000/api/items/${params.name}`)
+    setInterval(()=>{
+
+      fetch(`http://127.0.0.1:5000/api/items/${params.name}`)
       .then((response) => response.json())
       .then((data) => {
         // console.log(newList);
@@ -40,6 +41,9 @@ export default function page({ params }: { params: { name: string } }) {
         console.error("Error fetching data:", error);
         // Handle the error appropriately, e.g., display an error message to the user
       });
+
+    },3000)
+    
 
   }, [])
   

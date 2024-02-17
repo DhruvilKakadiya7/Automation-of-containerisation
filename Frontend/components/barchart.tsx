@@ -23,11 +23,11 @@ export function NetChart({val1,val2}) {
   return (
     <ResponsiveContainer width="100%" height={200}>
     <BarChart width={500} height={200} data={data} dataKey="value">
-  
+    <Tooltip/>
       {data.map((entry, index) => (
         <Bar key={entry.name} dataKey={entry.name} fill={COLORS[index]} />
       ))}     <Legend />
-<Tooltip/>
+
     </BarChart>
 
   </ResponsiveContainer>
