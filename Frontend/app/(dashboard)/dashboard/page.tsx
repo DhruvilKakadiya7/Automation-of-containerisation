@@ -1,3 +1,4 @@
+'use client';
 import { CalendarDateRangePicker } from "@/components/date-range-picker";
 import { Overview } from "@/components/overview";
 import { RecentSales } from "@/components/recent-sales";
@@ -22,8 +23,50 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useState } from "react";
+
+interface RepoData {
+    rep_url: string;
+  }
 
 export default function page() {
+
+    const [url, setUrl] = useState<string>(''); // State to hold the URL
+
+    const handleUrlChange = (event) => {
+        setUrl(event.target.value);
+    };
+
+    const handleSubmit = () => {
+
+        console.log(url);
+
+        const data: RepoData = {
+            rep_data: url
+        }
+
+        fetch('http://127.0.0.1:5000/api/create_website/', {
+            method: 'POST', // Specify the method
+            headers: {
+              'Content-Type': 'application/json', // Set the content type header
+            },
+            body: JSON.stringify(data),
+          })
+          .then((response: Response) => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json();
+          })
+          .then((data: any) => { // You can replace 'any' with the actual type of your response data
+            console.log("Website created successfully:", data);
+          })
+          .catch((error: Error) => {
+            console.error("Error creating website:", error);
+          });
+          
+        console.log("Hello");
+    };
   return (
     <ScrollArea className="h-full">
       <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
@@ -50,17 +93,11 @@ export default function page() {
             <Label htmlFor="name" className="text-right">
               Repo Link
             </Label>
-            <Input id="URL" placeholder="https://github.com/" className="col-span-3" />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="file" className="text-right">
-              Upload .env file
-            </Label>
-            <Input id="file" type="file" className="col-span-3" />
+            <Input id="URL" placeholder="https://github.com/" className="col-span-3" onChange={handleUrlChange} />
           </div>
         </div>
         <DialogFooter>
-          <Button type="submit">Save changes</Button>
+          <Button type="submit" onClick={handleSubmit}>Save changes</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
