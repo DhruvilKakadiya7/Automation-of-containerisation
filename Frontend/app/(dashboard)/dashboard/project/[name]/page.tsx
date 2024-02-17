@@ -16,6 +16,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useEffect, useState } from "react";
+import { Livecpu } from "@/components/livecpu";
 // import { BarChart, Bar,Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 
@@ -173,7 +174,7 @@ export default function page({ params }: { params: { name: string } }) {
                   <CardTitle>Overview</CardTitle>
                 </CardHeader>
                 <CardContent className="pl-2">
-                  <Overview />
+                 <Livecpu/>
                 </CardContent>
               </Card>
               <Card className="col-span-4 md:col-span-3">
