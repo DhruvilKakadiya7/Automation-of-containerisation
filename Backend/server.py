@@ -155,6 +155,19 @@ def send_email():
     except Exception as e:
         print(f"Failed to send email to {to_email}: {str(e)}")
         return jsonify("Not Asian"), 201
+    
+
+@app.route('/api/getAll', methods=['GET'])
+def getAll():
+    client = docker.from_env()
+    containers = client.containers.list()
+    container_ids = [container.id for container in containers]
+    print(container_ids)
+    response_data = {
+    "container_ids": container_ids,
+    "container_count": len(containers)
+    }
+    return jsonify(response_data)
 
 if __name__ == '__main__':
     app.run(debug=True)
