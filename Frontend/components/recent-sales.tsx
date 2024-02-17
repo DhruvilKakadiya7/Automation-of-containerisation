@@ -1,66 +1,67 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge"
 
 export function RecentSales() {
   return (
     <div className="space-y-8">
       <div className="flex items-center">
-        <Avatar className="h-9 w-9">
-          <AvatarImage src="/avatars/01.png" alt="Avatar" />
-          <AvatarFallback>OM</AvatarFallback>
+      <Avatar className="h-9 w-9">
+          <AvatarImage src="/avatars/04.png" alt="Avatar" />
+          <AvatarFallback style = {{backgroundColor: 'red'}}>P1</AvatarFallback>
         </Avatar>
         <div className="ml-4 space-y-1">
-          <p className="text-sm font-medium leading-none">Olivia Martin</p>
+          <p className="text-sm font-medium leading-none">CPU Overload</p>
           <p className="text-sm text-muted-foreground">
-            olivia.martin@email.com
+            CPU Working at 90% for more than 30 seconds.
           </p>
         </div>
-        <div className="ml-auto font-medium">+$1,999.00</div>
+        <div className="ml-auto font-medium"><Badge>High</Badge></div>
       </div>
       <div className="flex items-center">
-        <Avatar className="flex h-9 w-9 items-center justify-center space-y-0 border">
-          <AvatarImage src="/avatars/02.png" alt="Avatar" />
-          <AvatarFallback>JL</AvatarFallback>
+      <Avatar className="h-9 w-9">
+          <AvatarImage src="/avatars/04.png" alt="Avatar" />
+          <AvatarFallback style = {{backgroundColor: 'red'}}>P2</AvatarFallback>
         </Avatar>
         <div className="ml-4 space-y-1">
-          <p className="text-sm font-medium leading-none">Jackson Lee</p>
-          <p className="text-sm text-muted-foreground">jackson.lee@email.com</p>
+          <p className="text-sm font-medium leading-none">Problem 2</p>
+          <p className="text-sm text-muted-foreground">Very Problematic problem 2</p>
         </div>
-        <div className="ml-auto font-medium">+$39.00</div>
+        <div className="ml-auto font-medium"><Badge>High</Badge></div>
       </div>
       <div className="flex items-center">
-        <Avatar className="h-9 w-9">
-          <AvatarImage src="/avatars/03.png" alt="Avatar" />
-          <AvatarFallback>IN</AvatarFallback>
+      <Avatar className="h-9 w-9">
+          <AvatarImage src="/avatars/04.png" alt="Avatar" />
+          <AvatarFallback style = {{backgroundColor: 'yellow'}}>P3</AvatarFallback>
         </Avatar>
         <div className="ml-4 space-y-1">
-          <p className="text-sm font-medium leading-none">Isabella Nguyen</p>
+          <p className="text-sm font-medium leading-none">Problem 3</p>
           <p className="text-sm text-muted-foreground">
-            isabella.nguyen@email.com
+            Theek Thaak Problematic Problem 3
           </p>
         </div>
-        <div className="ml-auto font-medium">+$299.00</div>
+        <div className="ml-auto font-medium"><Badge>Medium</Badge></div>
       </div>
       <div className="flex items-center">
         <Avatar className="h-9 w-9">
           <AvatarImage src="/avatars/04.png" alt="Avatar" />
-          <AvatarFallback>WK</AvatarFallback>
+          <AvatarFallback style = {{backgroundColor: 'lightgreen'}}>P4</AvatarFallback>
         </Avatar>
         <div className="ml-4 space-y-1">
-          <p className="text-sm font-medium leading-none">William Kim</p>
-          <p className="text-sm text-muted-foreground">will@email.com</p>
+          <p className="text-sm font-medium leading-none">Problem 4</p>
+          <p className="text-sm text-muted-foreground">Bilkul dikkat nahi problem 4</p>
         </div>
-        <div className="ml-auto font-medium">+$99.00</div>
+        <div className="ml-auto font-medium"><Badge>Low</Badge></div>
       </div>
       <div className="flex items-center">
-        <Avatar className="h-9 w-9">
-          <AvatarImage src="/avatars/05.png" alt="Avatar" />
-          <AvatarFallback>SD</AvatarFallback>
+      <Avatar className="h-9 w-9">
+          <AvatarImage src="/avatars/04.png" alt="Avatar" />
+          <AvatarFallback style = {{backgroundColor: 'lightgreen'}}>P4</AvatarFallback>
         </Avatar>
         <div className="ml-4 space-y-1">
-          <p className="text-sm font-medium leading-none">Sofia Davis</p>
-          <p className="text-sm text-muted-foreground">sofia.davis@email.com</p>
+          <p className="text-sm font-medium leading-none">Problem 5</p>
+          <p className="text-sm text-muted-foreground">Nahi bhi theek karoge toh chalega problem 5</p>
         </div>
-        <div className="ml-auto font-medium">+$39.00</div>
+        <div className="ml-auto font-medium"><Badge>Low</Badge></div>
       </div>
     </div>
   );
