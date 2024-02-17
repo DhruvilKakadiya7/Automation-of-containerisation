@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 'use client';
+=======
+"use client"
+>>>>>>> 8639ad9b9d6a89f4f6d04ae0f87138a7bf5f20d7
 import { CalendarDateRangePicker } from "@/components/date-range-picker";
 import { Overview } from "@/components/overview";
 import { RecentSales } from "@/components/recent-sales";
@@ -23,6 +27,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+<<<<<<< HEAD
 import { useState } from "react";
 
 interface RepoData {
@@ -67,12 +72,35 @@ export default function page() {
           
         console.log("Hello");
     };
+=======
+import { useState,useEffect } from "react";
+
+export default function page() {
+  const [projects, setProjects] = useState([])
+
+
+  useEffect(() => {
+    fetch("http://127.0.0.1:5000/api/getAll")
+      .then((response) => response.json())
+      .then((data) => {
+        // console.log(newList);
+        setProjects(data.container_ids);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        // Handle the error appropriately, e.g., display an error message to the user
+      });
+
+  }, [])
+
+  
+>>>>>>> 8639ad9b9d6a89f4f6d04ae0f87138a7bf5f20d7
   return (
     <ScrollArea className="h-full">
       <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
         <div className="flex items-center justify-between space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">
-            Hi, Welcome back 👋
+            All Projects
           </h2>
           <div className="hidden md:flex items-center space-x-2">
             {/* <CalendarDateRangePicker /> */}
@@ -104,115 +132,39 @@ export default function page() {
           </div>
         </div>
         <Tabs defaultValue="overview" className="space-y-4">
-          <TabsList>
-            {/* <TabsTrigger value="overview">Overview</TabsTrigger> */}
-            {/* <TabsTrigger value="analytics" disabled>
-              Analytics
-            </TabsTrigger> */}
-          </TabsList>
           <TabsContent value="overview" className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Active Now
-                  </CardTitle>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    className="h-4 w-4 text-muted-foreground"
-                  >
-                    <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-                  </svg>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">+573</div>
-                  <p className="text-xs text-muted-foreground">
-                    +201 since last hour
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Active Now
-                  </CardTitle>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    className="h-4 w-4 text-muted-foreground"
-                  >
-                    <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-                  </svg>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">+573</div>
-                  <p className="text-xs text-muted-foreground">
-                    +201 since last hour
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Active Now
-                  </CardTitle>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    className="h-4 w-4 text-muted-foreground"
-                  >
-                    <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-                  </svg>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">+573</div>
-                  <p className="text-xs text-muted-foreground">
-                    +201 since last hour
-                  </p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Active Now
-                  </CardTitle>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    className="h-4 w-4 text-muted-foreground"
-                  >
-                    <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-                  </svg>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">+573</div>
-                  <p className="text-xs text-muted-foreground">
-                    +201 since last hour
-                  </p>
-                </CardContent>
-              </Card>
+            {projects.map((project,ind)=>
+             <Card key={ind}>
+             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+               <CardTitle className="text-sm font-medium">
+                 {project.status}
+               </CardTitle>
+               <svg
+                 xmlns="http://www.w3.org/2000/svg"
+                 viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 strokeLinecap="round"
+                 strokeLinejoin="round"
+                 strokeWidth="2"
+                 className="h-4 w-4 text-muted-foreground"
+               >
+                 <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+               </svg>
+             </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{project.name}</div>
+              <p className="text-xs text-muted-foreground">
+                {(() => {
+                  const dateObject = new Date(project.created);
+                  const formattedDate = dateObject.toLocaleString();
+                  return formattedDate;
+                })()}
+              </p>
+            </CardContent>
+           </Card>)}
+           
             </div>
             <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-7">
               <Card className="col-span-4">
