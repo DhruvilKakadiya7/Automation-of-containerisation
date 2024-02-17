@@ -51,8 +51,8 @@ def get_stats(container_id):
 @app.route('/api/create_website', methods=['POST'])
 def create_item():
     global random_number
-    data = request.json    
-    repo_url = data.get('rep_url')
+    data = request.form.get('rep_url')
+    repo_url = data
     repo_name = re.search(r'\/([^\/]+)\/?$', repo_url).group(1).lower() + str(random_number )
     container_name = f"{repo_name}_container".lower()
     image_tag = f"{repo_name}_image".lower()

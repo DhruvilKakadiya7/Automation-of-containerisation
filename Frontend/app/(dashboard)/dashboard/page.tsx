@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 'use client';
-=======
-"use client"
->>>>>>> 8639ad9b9d6a89f4f6d04ae0f87138a7bf5f20d7
 import { CalendarDateRangePicker } from "@/components/date-range-picker";
 import { Overview } from "@/components/overview";
 import { RecentSales } from "@/components/recent-sales";
@@ -16,86 +12,57 @@ import {
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-<<<<<<< HEAD
-=======
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogHeader,
   DialogFooter,
+  DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-<<<<<<< HEAD
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+import { useEffect, useState } from "react";
+import { Label } from '@/components/ui/label';
+import { Input } from "@/components/ui/input";
 
 
-=======
-<<<<<<< HEAD
-import { useState } from "react";
-
-interface RepoData {
-    rep_url: string;
-  }
->>>>>>> 6232777704fefa234acce2ccfe65951883860d95
 
 export default function page() {
-
     const [url, setUrl] = useState<string>(''); // State to hold the URL
+    const [projects, setProjects] = useState([])
 
     const handleUrlChange = (event) => {
         setUrl(event.target.value);
     };
 
     const handleSubmit = () => {
-
+      console.log("Hello");
         console.log(url);
+        const formData = new FormData();
+        formData.append('rep_url', url);
 
-        const data: RepoData = {
-            rep_data: url
-        }
-
-        fetch('http://127.0.0.1:5000/api/create_website/', {
+        fetch('http://127.0.0.1:5000/api/create_website', {
+            mode: 'no-cors',
             method: 'POST', // Specify the method
-            headers: {
-              'Content-Type': 'application/json', // Set the content type header
-            },
-            body: JSON.stringify(data),
+      body: formData,
           })
-          .then((response: Response) => {
+          .then((response) => {
             if (!response.ok) {
               throw new Error('Network response was not ok');
             }
             return response.json();
           })
-          .then((data: any) => { // You can replace 'any' with the actual type of your response data
+          .then((data) => { // You can replace 'any' with the actual type of your response data
             console.log("Website created successfully:", data);
           })
-          .catch((error: Error) => {
+          .catch((error) => {
             console.error("Error creating website:", error);
           });
           
-        console.log("Hello");
+        
     };
-=======
->>>>>>> e3fe9ef712345e65b1d0d2402d3386d474132ae0
-import { useState,useEffect } from "react";
 
-export default function page() {
-  const [projects, setProjects] = useState([])
+
 
 
   useEffect(() => {
@@ -112,8 +79,6 @@ export default function page() {
 
   }, [])
 
-  
->>>>>>> 8639ad9b9d6a89f4f6d04ae0f87138a7bf5f20d7
   return (
     <ScrollArea className="h-full">
       <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
@@ -123,9 +88,8 @@ export default function page() {
           </h2>
           <div className="hidden md:flex items-center space-x-2">
             {/* <CalendarDateRangePicker /> */}
-<<<<<<< HEAD
-            <Button>ADD</Button>
-=======
+
+           
             {/* <Button>ADD</Button> */}
             <Dialog>
       <DialogTrigger asChild>
@@ -151,7 +115,7 @@ export default function page() {
         </DialogFooter>
       </DialogContent>
     </Dialog>
->>>>>>> e3fe9ef712345e65b1d0d2402d3386d474132ae0
+
           </div>
         </div>
         <Tabs defaultValue="overview" className="space-y-4">

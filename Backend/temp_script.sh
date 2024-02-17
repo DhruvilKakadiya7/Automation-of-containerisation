@@ -1,11 +1,11 @@
 #!/bin/bash
     
 # Variables
-REPOSITORY_NAME="dockertest4167" # Name your local Docker image
-IMAGE_TAG="dockertest4167_image" # Tag for your Docker image
+REPOSITORY_NAME="dockertest4541" # Name your local Docker image
+IMAGE_TAG="dockertest4541_image" # Tag for your Docker image
 GITHUB_REPO_URL="https://github.com/BakuDoriya-KatsZuku/DockerTest" # GitHub Repository URL
-CONTAINER_NAME="dockertest4167_container" # Name for your local container
-PORT_MAPPING="127.0.0.1:4167:4167" # Local:Container port mapping (adjust as needed)
+CONTAINER_NAME="dockertest4541_container" # Name for your local container
+PORT_MAPPING="127.0.0.1:4541:4541" # Local:Container port mapping (adjust as needed)
     
 # Clone the GitHub repository
 git clone $GITHUB_REPO_URL repo_dir
