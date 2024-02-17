@@ -23,8 +23,34 @@ random_number = 3000
 def get_stats(container_id):
     client = docker.from_env()
     container = client.containers.get(container_id)
-    cpu_stats = container.stats(stream=False)
-    return jsonify(cpu_stats)
+
+    # Collect a continuous stream of stats
+    container_stats = container.stats(stream=True)
+
+    # Store stats in a list (replace with preferred data structure)
+    stats_list = []
+
+    # Continuously collect and store stats in the list
+    for stats in container_stats:
+        if(len(stats_list) > 30): break
+        stats_list.append(stats)
+
+        # Optionally, you can process or print the data here
+        # print(stats["cpu_stats"]["cpu_usage"]["total_usage"])
+
+    # Close the stream when desired
+    container_stats.close()
+
+    print(stats_list)
+    print(len(stats_list))
+
+    # Return the collected stats (replace with preferred return method)
+    return jsonify("ma chuda")
+# def get_stats(container_id):
+#     client = docker.from_env()
+#     container = client.containers.get(container_id)
+#     cpu_stats = container.stats(stream=False)
+#     return jsonify(cpu_stats)
 
 #Given a repo link, host it
 @app.route('/api/create_website', methods=['POST'])
