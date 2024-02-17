@@ -1,4 +1,7 @@
 from flask import Flask, jsonify, request
+import docker
+import subprocess
+
 
 app = Flask(__name__)
 
@@ -10,21 +13,25 @@ data = [
 ]
 
 # Routes
-@app.route('/api/items', methods=['GET'])
-def get_items():
-    return jsonify(data)
 
-@app.route('/api/items/<int:item_id>', methods=['GET'])
-def get_item(item_id):
-    item = next((item for item in data if item['id'] == item_id), None)
-    if item:
-        return jsonify(item)
-    else:
-        return jsonify({"error": "Item not found"}), 404
 
+#Get Stats
+@app.route('/api/items/<string:container_id>', methods=['GET'])
+def get_stats(container_id):
+    client = docker.from_env()
+    container = client.containers.get(container_id)
+    cpu_stats = container.stats(stream=False)
+    return jsonify(cpu_stats)
+
+#Given a repo link, host it
 @app.route('/api/items', methods=['POST'])
 def create_item():
+
+    subprocess.run(['chmod', '+x', 'temp_script.sh'])
+    subprocess.run(['./temp_script.sh'])
+    
     new_item = request.json
+
     data.append(new_item)
     return jsonify(new_item), 201
 
