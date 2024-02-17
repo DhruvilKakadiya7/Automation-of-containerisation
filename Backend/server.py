@@ -5,6 +5,13 @@ import os
 import re
 import random
 from util  import  get_container_stats
+
+import smtplib
+import csv
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.application import MIMEApplication
+
 app = Flask(__name__)
 
 # Sample data
