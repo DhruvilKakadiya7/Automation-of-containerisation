@@ -161,7 +161,12 @@ def send_email():
 def getAll():
     client = docker.from_env()
     containers = client.containers.list()
-    container_ids = [container.id for container in containers]
+
+
+    container_ids = [{'status':container.status,
+                      'id':container.id, 
+                      'name': container.name, 
+                      'created': container.attrs['Created']} for container in containers]
     print(container_ids)
     response_data = {
     "container_ids": container_ids,
