@@ -6,7 +6,11 @@ import re
 import random
 from util  import  get_container_stats
 from flask_cors import CORS, cross_origin
-
+import smtplib
+import csv
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.application import MIMEApplication
 
 app = Flask(__name__)
 cors = CORS(app)

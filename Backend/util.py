@@ -76,5 +76,6 @@ def get_container_stats(container_id):
         "network_io_read": r//1024,
         "network_io_write": t//1024,
         "memory_usage": cpu_stats["memory_stats"]["usage"]//1024**2,
+        "process_count":cpu_stats["pids_stats"]["current"]
         }
 
