@@ -17,6 +17,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useEffect, useState } from "react";
 import { Livecpu } from "@/components/livecpu";
+import { AccountForm } from "@/components/alerts";
 import { Loader2 } from "lucide-react"
 
 // import { BarChart, Bar,Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -127,7 +128,7 @@ export default function page({ params }: { params: { name: string } }) {
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="alerts" disabled>
+            <TabsTrigger value="alerts">
               Alerts
             </TabsTrigger>
             <TabsTrigger value="optimize" disabled>
@@ -259,7 +260,13 @@ export default function page({ params }: { params: { name: string } }) {
               </Card>
             </div>
           </TabsContent>
+          <TabsContent value="alerts" className="space-y-4">
+           
+            <AccountForm/>
+   
+          </TabsContent>
         </Tabs>
+   
       </div>
     </ScrollArea>
   );
