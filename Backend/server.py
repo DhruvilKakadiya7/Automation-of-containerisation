@@ -25,6 +25,16 @@ def get_stats(container_id):
     client = docker.from_env()
     container = client.containers.get(container_id)
     cpu_stats = container.stats(stream=False)
+    cpu_usage = cpu_stats['cpu_stats']['cpu_usage']['total_usage'] / cpu_stats['cpu_stats']['system_cpu_usage'] * 100
+    memory_usage = cpu_stats['memory_stats']['usage']/ 1024**2
+    total_memory = container.attrs['HostConfig']['Memory'] / 1024**3
+    network_io = [cpu_stats['networks']['eth0']['rx_bytes'] / 1024, cpu_stats['networks']['eth0']['tx_bytes'] / 1024**2]
+
+    print(cpu_usage)
+    print(memory_usage)
+    print(total_memory)
+    print(network_io)
+
     return jsonify(cpu_stats)
 
 #Given a repo link, host it
