@@ -1,4 +1,8 @@
+<<<<<<< HEAD
+'use client';
+=======
 "use client"
+>>>>>>> 8639ad9b9d6a89f4f6d04ae0f87138a7bf5f20d7
 import { CalendarDateRangePicker } from "@/components/date-range-picker";
 import { Overview } from "@/components/overview";
 import { RecentSales } from "@/components/recent-sales";
@@ -12,6 +16,66 @@ import {
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+<<<<<<< HEAD
+=======
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+<<<<<<< HEAD
+import { useState } from "react";
+
+interface RepoData {
+    rep_url: string;
+  }
+
+export default function page() {
+
+    const [url, setUrl] = useState<string>(''); // State to hold the URL
+
+    const handleUrlChange = (event) => {
+        setUrl(event.target.value);
+    };
+
+    const handleSubmit = () => {
+
+        console.log(url);
+
+        const data: RepoData = {
+            rep_data: url
+        }
+
+        fetch('http://127.0.0.1:5000/api/create_website/', {
+            method: 'POST', // Specify the method
+            headers: {
+              'Content-Type': 'application/json', // Set the content type header
+            },
+            body: JSON.stringify(data),
+          })
+          .then((response: Response) => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json();
+          })
+          .then((data: any) => { // You can replace 'any' with the actual type of your response data
+            console.log("Website created successfully:", data);
+          })
+          .catch((error: Error) => {
+            console.error("Error creating website:", error);
+          });
+          
+        console.log("Hello");
+    };
+=======
+>>>>>>> e3fe9ef712345e65b1d0d2402d3386d474132ae0
 import { useState,useEffect } from "react";
 
 export default function page() {
@@ -33,6 +97,7 @@ export default function page() {
   }, [])
 
   
+>>>>>>> 8639ad9b9d6a89f4f6d04ae0f87138a7bf5f20d7
   return (
     <ScrollArea className="h-full">
       <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
@@ -42,7 +107,35 @@ export default function page() {
           </h2>
           <div className="hidden md:flex items-center space-x-2">
             {/* <CalendarDateRangePicker /> */}
+<<<<<<< HEAD
             <Button>ADD</Button>
+=======
+            {/* <Button>ADD</Button> */}
+            <Dialog>
+      <DialogTrigger asChild>
+        <Button>ADD</Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Auto-Deploy Projects</DialogTitle>
+          <DialogDescription>
+            Add GitHub Repository Link and click save when you're done.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-4 py-4">
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="name" className="text-right">
+              Repo Link
+            </Label>
+            <Input id="URL" placeholder="https://github.com/" className="col-span-3" onChange={handleUrlChange} />
+          </div>
+        </div>
+        <DialogFooter>
+          <Button type="submit" onClick={handleSubmit}>Save changes</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+>>>>>>> e3fe9ef712345e65b1d0d2402d3386d474132ae0
           </div>
         </div>
         <Tabs defaultValue="overview" className="space-y-4">
