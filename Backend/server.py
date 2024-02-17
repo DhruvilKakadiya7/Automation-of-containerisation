@@ -53,10 +53,10 @@ def create_item():
     global random_number
     data = request.form.get('rep_url')
     repo_url = data
-    repo_name = re.search(r'\/([^\/]+)\/?$', repo_url).group(1).lower() + str(random_number )
-    container_name = f"{repo_name}_container".lower()
+    repo_name = re.search(r'\/([^\/]+)\/?$', repo_url).group(1).lower() + str(random_number)
+    container_name = f"{repo_name}".lower()
     image_tag = f"{repo_name}_image".lower()
-    port_mapping = f"127.0.0.1:{random_number}:{random_number}"  # You can adjust this as needed
+    port_mapping = f"127.0.0.1:{random_number}:{random_number+5}"  # You can adjust this as needed
     random_number += 1
 
     bash_script =  f"""#!/bin/bash
@@ -186,12 +186,11 @@ def getLog(container_id):
                  'id': container.id,
                  'name': container.name,
                  'status': container.status}
-    return jsonify(logs_json)
+    return logs_json
 
-@app.route('/api/create_report', methods=['POST'])
-def create_report():
-    data = request.json    
-    return jsonify(reportGeneration(data))
+@app.route('/api/create_report/<string:container_id>', methods=['GET'])
+def create_report(container_id):
+    return jsonify(reportGeneration(getLog(container_id)))
 
 if __name__ == '__main__':
     app.run(debug=True)

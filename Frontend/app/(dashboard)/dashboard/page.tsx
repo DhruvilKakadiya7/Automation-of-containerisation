@@ -52,10 +52,12 @@ export default function page() {
             }
             return response.json();
           })
-          .then((data) => { // You can replace 'any' with the actual type of your response data
+          .then((data) => {
+            window.location.reload(); // You can replace 'any' with the actual type of your response data
             console.log("Website created successfully:", data);
           })
           .catch((error) => {
+            window.location.reload();
             console.error("Error creating website:", error);
           });
           
