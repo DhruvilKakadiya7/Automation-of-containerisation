@@ -12,6 +12,9 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 
+from LLM import reportGeneration
+from LLM import generated_script
+
 app = Flask(__name__)
 cors = CORS(app)
 
@@ -22,6 +25,8 @@ data = [
     {"id": 2, "name": "Item 2", "description": "Description of Item 2"},
     {"id": 3, "name": "Item 3", "description": "Description of Item 3"}
 ]
+
+
 
 # Routes
 
@@ -53,6 +58,7 @@ def create_item():
     image_tag = f"{repo_name}_image".lower()
     port_mapping = f"127.0.0.1:{random_number}:{random_number}"  # You can adjust this as needed
     random_number += 1
+
     bash_script =  f"""#!/bin/bash
     
 # Variables
@@ -65,6 +71,12 @@ PORT_MAPPING="{port_mapping}" # Local:Container port mapping (adjust as needed)
 # Clone the GitHub repository
 git clone $GITHUB_REPO_URL repo_dir
 cd repo_dir
+
+if [ ! -f Dockerfile ]; then
+    echo "Dockerfile not found, adding one..."
+    cat << EOF > Dockerfile
+{generated_script}
+fi
     
 # Build your Docker image (assuming the Dockerfile is in the root of the repo)
 docker build -t $REPOSITORY_NAME:$IMAGE_TAG .
@@ -163,6 +175,23 @@ def getAll():
     "container_count": len(containers)
     }
     return jsonify(response_data)
+
+@app.route('/api/getLog/<string:container_id>', methods=['GET'])
+def getLog(container_id):
+    client = docker.from_env()
+    container = client.containers.get(container_id)
+    logs = container.logs()
+    ls = logs.decode('utf-8').split('\n')
+    logs_json = {'logs': ls,
+                 'id': container.id,
+                 'name': container.name,
+                 'status': container.status}
+    return jsonify(logs_json)
+
+@app.route('/api/create_report', methods=['POST'])
+def create_report():
+    data = request.json    
+    return jsonify(reportGeneration(data))
 
 if __name__ == '__main__':
     app.run(debug=True)
