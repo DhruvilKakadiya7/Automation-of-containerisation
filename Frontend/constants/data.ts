@@ -124,28 +124,39 @@ export const navItems: NavItem[] = [
     icon: "user",
     label: "user",
   },
-  {
-    title: "Employee",
-    href: "/dashboard/employee",
-    icon: "employee",
-    label: "employee",
-  },
-  {
-    title: "Profile",
-    href: "/dashboard/profile",
-    icon: "profile",
-    label: "profile",
-  },
+  // {
+  //   title: "Employee",
+  //   href: "/dashboard/employee",
+  //   icon: "employee",
+  //   label: "employee",
+  // },
+  // {
+  //   title: "Profile",
+  //   href: "/dashboard/profile",
+  //   icon: "profile",
+  //   label: "profile",
+  // },
   {
     title: "Tasks",
     href: "/dashboard/kanban",
     icon: "kanban",
     label: "kanban",
   },
+  // {
+  //   title: "Login",
+  //   href: "/",
+  //   icon: "login",
+  //   label: "login",
+  // },
+];
+
+
+export const navProjects: NavItem[] = [
   {
-    title: "Login",
-    href: "/",
-    icon: "login",
-    label: "login",
+    title: "Project 1",
+    href: "dashboard/project/1",
+    icon: "dashboard",
+    label: "Project 1",
   },
+
 ];
