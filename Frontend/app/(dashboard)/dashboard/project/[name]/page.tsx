@@ -1,5 +1,9 @@
+'use client'
 import { CalendarDateRangePicker } from "@/components/date-range-picker";
 import { Overview } from "@/components/overview";
+import { Piechart } from "@/components/piechart";
+import { NetChart } from "@/components/barchart";
+
 import { RecentSales } from "@/components/recent-sales";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,27 +15,56 @@ import {
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useEffect, useState } from "react";
+// import { BarChart, Bar,Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-export default function page({ params }: { params: { slug: string } }) {
 
+interface ChartData {
+  name: string;
+  value: number;
+}
+
+export default function page({ params }: { params: { name: string } }) {
+  const [container, setContainer] = useState({})
+  
+
+  useEffect(() => {
+    fetch(`http://127.0.0.1:5000/api/items/${params.name}`)
+      .then((response) => response.json())
+      .then((data) => {
+        // console.log(newList);
+        setContainer(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        // Handle the error appropriately, e.g., display an error message to the user
+      });
+
+  }, [])
   
   return (
     <ScrollArea className="h-full">
       <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
         <div className="flex items-center justify-between space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">
-            Hi, Welcome back 👋
+           {container.name}
           </h2>
           <div className="hidden md:flex items-center space-x-2">
-            <CalendarDateRangePicker />
+            {/* <CalendarDateRangePicker /> */}
             <Button>Download</Button>
           </div>
         </div>
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="analytics" disabled>
-              Analytics
+            <TabsTrigger value="alerts" disabled>
+              Alerts
+            </TabsTrigger>
+            <TabsTrigger value="optimize" disabled>
+              Optimize
+            </TabsTrigger>
+            <TabsTrigger value="network" disabled>
+              Network
             </TabsTrigger>
           </TabsList>
           <TabsContent value="overview" className="space-y-4">
@@ -39,7 +72,7 @@ export default function page({ params }: { params: { slug: string } }) {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Total Revenue
+                    CPU Usage
                   </CardTitle>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -55,16 +88,16 @@ export default function page({ params }: { params: { slug: string } }) {
                   </svg>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">$45,231.89</div>
-                  <p className="text-xs text-muted-foreground">
-                    +20.1% from last month
-                  </p>
+                <Piechart data={[
+    { name: 'CPU Active', value: container.cpu_usage },
+    { name: 'CPU Idle', value: 100-container.cpu_usage},
+  ]}/>
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Subscriptions
+                    Memory Usage
                   </CardTitle>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -82,15 +115,17 @@ export default function page({ params }: { params: { slug: string } }) {
                   </svg>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">+2350</div>
-                  <p className="text-xs text-muted-foreground">
-                    +180.1% from last month
-                  </p>
+                <Piechart  startAngle={180}
+
+          endAngle={0} data={[
+    { name: 'Used', value: container.memory_usage },
+    { name: 'Free', value: 7000-container.memory_usage},
+  ]}/>
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Sales</CardTitle>
+                  <CardTitle className="text-sm font-medium">Network</CardTitle>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
@@ -106,16 +141,13 @@ export default function page({ params }: { params: { slug: string } }) {
                   </svg>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">+12,234</div>
-                  <p className="text-xs text-muted-foreground">
-                    +19% from last month
-                  </p>
+                <NetChart val1={container.network_io_read} val2={container.network_io_write} />
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Active Now
+                   Active Process
                   </CardTitle>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -131,10 +163,7 @@ export default function page({ params }: { params: { slug: string } }) {
                   </svg>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">+573</div>
-                  <p className="text-xs text-muted-foreground">
-                    +201 since last hour
-                  </p>
+               <h1 className="font-bold text-5xl">{container.process_count}</h1>
                 </CardContent>
               </Card>
             </div>
