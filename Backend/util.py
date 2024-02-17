@@ -68,9 +68,10 @@ def get_container_stats(container_id):
     client = docker.from_env()
     container = client.containers.get(container_id)
     cpu_stats = container.stats(stream=False)
-    # print(cpu_stats)
+    print(cpu_stats)
     r,t = calculate_network_bytes(cpu_stats)
     return {
+        "name": container.name,
         "cpu_usage": calculate_cpu_percent(cpu_stats),
         "network_io_read": r//1024,
         "network_io_write": t//1024,

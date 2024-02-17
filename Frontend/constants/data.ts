@@ -154,7 +154,7 @@ export const navItems: NavItem[] = [
 export const navProjects: NavItem[] = [
   {
     title: "Project 1",
-    href: "dashboard/project/1",
+    href: "/dashboard/project/1",
     icon: "dashboard",
     label: "Project 1",
   },

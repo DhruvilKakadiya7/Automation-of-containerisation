@@ -5,7 +5,12 @@ import os
 import re
 import random
 from util  import  get_container_stats
+from flask_cors import CORS, cross_origin
+
+
 app = Flask(__name__)
+cors = CORS(app)
+
 
 # Sample data
 data = [

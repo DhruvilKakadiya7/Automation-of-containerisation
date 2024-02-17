@@ -1,3 +1,4 @@
+'use client'
 import { CalendarDateRangePicker } from "@/components/date-range-picker";
 import { Overview } from "@/components/overview";
 import { RecentSales } from "@/components/recent-sales";
@@ -11,16 +12,31 @@ import {
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useEffect, useState } from "react";
 
-export default function page({ params }: { params: { slug: string } }) {
+export default function page({ params }: { params: { name: string } }) {
+  const [container, setContainer] = useState({})
 
+  useEffect(() => {
+    fetch(`http://127.0.0.1:5000/api/items/${params.name}`)
+      .then((response) => response.json())
+      .then((data) => {
+        // console.log(newList);
+        setContainer(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        // Handle the error appropriately, e.g., display an error message to the user
+      });
+
+  }, [])
   
   return (
     <ScrollArea className="h-full">
       <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
         <div className="flex items-center justify-between space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">
-            Hi, Welcome back 👋
+           { container.name}
           </h2>
           <div className="hidden md:flex items-center space-x-2">
             <CalendarDateRangePicker />
