@@ -1,10 +1,20 @@
-
+from flask import Flask, jsonify, request, Response, stream_with_context, json
+import docker
+import subprocess
+import os
+import re
+import random
+from util  import  get_container_stats
+from flask_cors import CORS, cross_origin
+import smtplib
+import csv
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.application import MIMEApplication
 import docker
 import time
 import logging
-
 from util import get_container_stats
-
 import slack
 import os
 from pathlib import Path
@@ -12,33 +22,51 @@ from pathlib import Path
 from flask import Flask
 from slackeventsapi import SlackEventAdapter
 
+app = Flask(__name__)
+cors = CORS(app)
 
-def check_container_status(container_name, metrics, metrics_threshold):
-  """
-  Checks the CPU and memory usage of a container and triggers alerts if thresholds are exceeded.
 
-  Args:
-    container_name: Name of the docker container to monitor.
-    cpu_threshold: CPU usage threshold percentage (int).
-    memory_threshold: Memory usage threshold percentage (int).
+# Sample data
+data = [
+    {"id": 1, "name": "Item 1", "description": "Description of Item 1"},
+    {"id": 2, "name": "Item 2", "description": "Description of Item 2"},
+    {"id": 3, "name": "Item 3", "description": "Description of Item 3"}
+]
 
-  Returns:
-    True if an alert was triggered, False otherwise.
-  """
+# Routes
 
-  # Get CPU and memory stats
-  stats = get_container_stats(container_name)
+random_number = 3000
 
-  # Check thresholds and trigger alerts
-  triggered = False
-  for i in range(len(metrics)):
-    if stats[metrics[i]] > metrics_threshold[i]:
-      logging.warning(f"Container {container_name} {metrics[i]}: {stats[metrics[i]]:.2f}%, exceeding threshold of {metrics_threshold[i]}")
-      trigger_alert("Some Usage High")
-      triggered = True
+def send_email(to_email, subject, body, attachment):
+    smtp_server = 'smtp.gmail.com'
+    smtp_port = 587
+    smtp_username = 'vm5503@gmail.com'
+    smtp_password = 'zztm jcvd hlyj cxaz'
 
-  return triggered
+    msg = MIMEMultipart()
+    msg['From'] = smtp_username
+    msg['To'] = to_email
+    msg['Subject'] = subject
 
+    msg.attach(MIMEText(body, 'plain'))
+
+    if attachment:
+        with open(attachment, 'rb') as file:
+            attach_part = MIMEApplication(file.read(), Name=attachment)
+        attach_part['Content-Disposition'] = f'attachment; filename="{attachment}"'
+        msg.attach(attach_part)
+
+    try:
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.ehlo()
+        server.starttls()
+        server.ehlo()
+        server.login(smtp_username, smtp_password)
+        server.sendmail(smtp_username, to_email, msg.as_string())
+        server.quit()
+        print(f"Email sent to {to_email}")
+    except Exception as e:
+        print(f"Failed to send email to {to_email}: {str(e)}")
 
 def trigger_alert(text):
   """
@@ -48,6 +76,8 @@ def trigger_alert(text):
     channel_id: The ID of the Slack channel to send the message to.
     text: The text of the message to send.
   """
+
+  send_email("akhilpc07@gmail.com", "Docker Alert", text, None)
 
   channel_id = '#random'
 
@@ -64,18 +94,39 @@ def trigger_alert(text):
   except slack.errors.SlackApiError as e:
     print(f"Error sending message: {e}")
 
+def check_container_status(container_name, metrics, metrics_threshold):
+  # Get CPU and memory stats
+  stats = get_container_stats(container_name)
 
-if __name__ == "__main__":
-  # Replace with your actual container name and customize thresholds if needed
-  container_name = "a58aef16262e9dc894c47fcb00fcbde923fd1df37252afc0e5e24091c4665003"
+  # Check thresholds and trigger alerts
+  triggered = False
+  for i in range(len(metrics)):
+    if stats[metrics[i]] > metrics_threshold[i]:
+      logging.warning(f"Container {container_name} {metrics[i]}: {stats[metrics[i]]:.2f}%, exceeding threshold of {metrics_threshold[i]}")
+      trigger_alert("Some Usage High")
+      triggered = True
 
-  # Set up logging
-  logging.basicConfig(level=logging.WARNING)
+  return triggered
 
-  while True:
-    triggered = check_container_status(container_name, ['cpu_usage'], [-10])
-    if triggered:
-      # Consider adding cooldown period to avoid repetitive alerts
-      time.sleep(60)  # Wait for 1 minute before checking again
-    else:
-      time.sleep(5)  # Check every 5 seconds
+@app.route('/api/alert', methods=['GET'])
+def alert():
+    # Replace with your actual container name and customize thresholds if needed
+    container_name = '499731b3472a44680fbcfe965956fa789a5884232ebdc804462d9e443fa0130a'
+
+    # return jsonify(container_name)
+
+    # Set up logging
+    logging.basicConfig(level=logging.WARNING)
+
+    while True:
+        triggered = check_container_status(container_name, ['cpu_usage'], [-10])
+        if triggered:
+        # Consider adding cooldown period to avoid repetitive alerts
+            time.sleep(60)  # Wait for 1 minute before checking again
+        else:
+            time.sleep(5)  # Check every 5 seconds
+    
+    return jsonify("Asian")
+
+if __name__ == '__main__':
+    app.run(debug=True)

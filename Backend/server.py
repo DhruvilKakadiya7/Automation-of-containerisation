@@ -11,6 +11,16 @@ import csv
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
+import docker
+import time
+import logging
+from util import get_container_stats
+import slack
+import os
+from pathlib import Path
+# from dotenv import load_dotenv
+from flask import Flask
+from slackeventsapi import SlackEventAdapter
 
 from LLM import reportGeneration
 from LLM import generated_script
@@ -31,6 +41,44 @@ data = [
 # Routes
 
 random_number = random.randint(3000, 4999)
+
+def trigger_alert(text):
+  """
+  Sends a message to a specific channel on Slack.
+
+  Args:
+    channel_id: The ID of the Slack channel to send the message to.
+    text: The text of the message to send.
+  """
+
+  channel_id = '#random'
+
+  # Load the access token securely
+  token = 'xoxb-6657086214227-6659740333668-H1fBtRRXIOaqiZ73CdapR28o'
+
+  # Use the WebClient for sending messages
+  client = slack.WebClient(token=token)
+
+  # Send the message and handle potential errors
+  try:
+    client.chat_postMessage(channel=channel_id, text=text)
+    print(f"Message sent to channel: {channel_id}")
+  except slack.errors.SlackApiError as e:
+    print(f"Error sending message: {e}")
+
+def check_container_status(container_name, metrics, metrics_threshold):
+  # Get CPU and memory stats
+  stats = get_container_stats(container_name)
+
+  # Check thresholds and trigger alerts
+  triggered = False
+  for i in range(len(metrics)):
+    if stats[metrics[i]] > metrics_threshold[i]:
+      logging.warning(f"Container {container_name} {metrics[i]}: {stats[metrics[i]]:.2f}%, exceeding threshold of {metrics_threshold[i]}")
+      trigger_alert("Some Usage High")
+      triggered = True
+
+  return triggered
 
 #Get Stats
 @app.route('/api/items/<string:container_id>', methods=['GET'])
