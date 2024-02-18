@@ -10,41 +10,54 @@ import {
     SelectTrigger,
     SelectValue,
   } from "@/components/ui/select"
+import { useState } from "react";
 
 
-const languages = [
-  { label: "English", value: "en" },
-  { label: "French", value: "fr" },
-  { label: "German", value: "de" },
-  { label: "Spanish", value: "es" },
-  { label: "Portuguese", value: "pt" },
-  { label: "Russian", value: "ru" },
-  { label: "Japanese", value: "ja" },
-  { label: "Korean", value: "ko" },
-  { label: "Chinese", value: "zh" },
-] as const
 
 
-export function AccountForm() {
+export function AccountForm({name,id}) {
+  const [selectedMetric, setSelectedMetric] = useState("");
+  const [threshold, setThreshold] = useState("");
+
+  const handleSubmit = () => {
+    const formData = new FormData();
+    formData.append("metric", selectedMetric);
+    formData.append("id", id);
+    formData.append("name", name);   
+    formData.append("threshold", threshold);
+    console.log(selectedMetric)
+    console.log(threshold)
+
+    fetch("http://127.0.0.1:5001/api/alert", {
+      method: "POST",
+      mode: 'no-cors',
+      body: formData,
+    })
+
+
+
+  }
  
   return (
     <div className="flex w-full items-center space-x-2">
-        <Select>
+        <Select value={selectedMetric}
+          onValueChange={setSelectedMetric}>
       <SelectTrigger >
         <SelectValue placeholder="Select a metric" />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
           <SelectLabel>select metric</SelectLabel>
-          <SelectItem value="CPU">CPU</SelectItem>
+          <SelectItem value="cpu_usage">CPU</SelectItem>
           <SelectItem value="MEMORY">MEMORY</SelectItem>
           <SelectItem value="INCOMING TRAFFIC">INCOMING TRAFFIC</SelectItem>
           <SelectItem value="OUTGOING TRAFFIC">OUTGOING TRAFFIC</SelectItem>
         </SelectGroup>
       </SelectContent>
     </Select>
-      <Input type="number" placeholder="threshold" />
-      <Button type="submit" className="min-w-max w-full w-10">Set Alert</Button>
+      <Input value={threshold}
+          onChange={(event) => setThreshold(event.target.value)} type="number" placeholder="threshold" />
+      <Button onClick={handleSubmit} type="submit" className="min-w-max w-full w-10">Set Alert</Button>
     </div>
   )
 }

@@ -262,7 +262,7 @@ export default function page({ params }: { params: { name: string } }) {
           </TabsContent>
           <TabsContent value="alerts" className="space-y-4">
            
-            <AccountForm/>
+            <AccountForm name={container.name} id={params.name}/>
    
           </TabsContent>
         </Tabs>

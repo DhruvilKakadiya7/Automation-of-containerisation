@@ -77,7 +77,7 @@ def trigger_alert(text):
     text: The text of the message to send.
   """
 
-  send_email("akhilpc07@gmail.com", "Docker Alert", text, None)
+  send_email("akhil07pc@gmail.com", "Docker Alert", text, None)
 
   channel_id = '#random'
 
@@ -94,7 +94,7 @@ def trigger_alert(text):
   except slack.errors.SlackApiError as e:
     print(f"Error sending message: {e}")
 
-def check_container_status(container_name, metrics, metrics_threshold):
+def check_container_status(container_name, metrics, metrics_threshold,name):
   # Get CPU and memory stats
   stats = get_container_stats(container_name)
 
@@ -102,16 +102,21 @@ def check_container_status(container_name, metrics, metrics_threshold):
   triggered = False
   for i in range(len(metrics)):
     if stats[metrics[i]] > metrics_threshold[i]:
-      logging.warning(f"Container {container_name} {metrics[i]}: {stats[metrics[i]]:.2f}%, exceeding threshold of {metrics_threshold[i]}")
-      trigger_alert("Some Usage High")
+      logging.warning(f"Container {name}: {container_name} \n {metrics[i]}: {stats[metrics[i]]:.2f}%, exceeding threshold of {metrics_threshold[i]}")
+      trigger_alert(f"Container {name}: {container_name} \n {metrics[i]}: {stats[metrics[i]]:.2f}%, exceeding threshold of {metrics_threshold[i]}")
       triggered = True
 
   return triggered
 
-@app.route('/api/alert', methods=['GET'])
+@app.route('/api/alert', methods=['POST'])
 def alert():
+    name = request.form.get('name')
+    id = request.form.get('id')
+    metric = request.form.get('metric')
+    threshold = request.form.get('threshold')
+    print(name, id, metric, threshold)
     # Replace with your actual container name and customize thresholds if needed
-    container_name = '499731b3472a44680fbcfe965956fa789a5884232ebdc804462d9e443fa0130a'
+    container_name = id
 
     # return jsonify(container_name)
 
@@ -119,7 +124,7 @@ def alert():
     logging.basicConfig(level=logging.WARNING)
 
     while True:
-        triggered = check_container_status(container_name, ['cpu_usage'], [-10])
+        triggered = check_container_status(container_name, [metric], [int(threshold)], name)
         if triggered:
         # Consider adding cooldown period to avoid repetitive alerts
             time.sleep(60)  # Wait for 1 minute before checking again
@@ -129,4 +134,4 @@ def alert():
     return jsonify("Asian")
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True,port=5001)
