@@ -31,7 +31,7 @@ export function AccountForm() {
     <div className="flex w-full items-center space-x-2">
         <Select>
       <SelectTrigger >
-        <SelectValue placeholder="Select a fruit" />
+        <SelectValue placeholder="Select a metric" />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
@@ -40,12 +40,11 @@ export function AccountForm() {
           <SelectItem value="MEMORY">MEMORY</SelectItem>
           <SelectItem value="INCOMING TRAFFIC">INCOMING TRAFFIC</SelectItem>
           <SelectItem value="OUTGOING TRAFFIC">OUTGOING TRAFFIC</SelectItem>
-          <SelectItem value="pineapple">Pineapple</SelectItem>
         </SelectGroup>
       </SelectContent>
     </Select>
       <Input type="number" placeholder="threshold" />
-      <Button type="submit" className="w-min-max">Set Alert</Button>
+      <Button type="submit" className="min-w-max w-full w-10">Set Alert</Button>
     </div>
   )
 }
