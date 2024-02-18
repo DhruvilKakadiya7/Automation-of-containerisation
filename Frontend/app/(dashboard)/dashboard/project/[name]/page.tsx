@@ -41,6 +41,7 @@ export default function page({ params }: { params: { name: string } }) {
   const [containerInfo, setContainerInfo] = useState(false)
 
   useEffect(() => {
+    handleDownload()
     setInterval(() => {
 
       fetch(`http://127.0.0.1:5000/api/items/${params.name}`)
@@ -56,10 +57,10 @@ export default function page({ params }: { params: { name: string } }) {
 
     }, 3000)
 
-
+    
   }, [])
 
-  const handleDownload = (event) => {
+  const handleDownload = () => {
 
 
     fetch(`http://127.0.0.1:5000/api/create_report/${params.name}`)
@@ -86,16 +87,16 @@ export default function page({ params }: { params: { name: string } }) {
 
             <Dialog>
               <DialogTrigger asChild>
-                <Button onClick={handleDownload}>Report</Button>
+                <Button>Scan</Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[800px]">
+              <DialogContent className="sm:max-w-[800px] max-h-screen overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>Report</DialogTitle>
                   <DialogDescription>
                     The health and details of a Docker container
                   </DialogDescription>
                 </DialogHeader>
-                <div className="grid gap-4 py-4">
+                <div className="grid gap-4 py-4 ">
                   {containerInfo ? <div>
                     <h2>Container Details</h2>
                     <ul>
@@ -131,7 +132,7 @@ export default function page({ params }: { params: { name: string } }) {
             <TabsTrigger value="alerts">
               Alerts
             </TabsTrigger>
-            <TabsTrigger value="optimize" disabled>
+            <TabsTrigger value="optimize" >
               Optimize
             </TabsTrigger>
             <TabsTrigger value="network" disabled>
@@ -241,10 +242,10 @@ export default function page({ params }: { params: { name: string } }) {
             <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-7">
               <Card className="col-span-4">
                 <CardHeader>
-                  <CardTitle>Overview</CardTitle>
+                  <CardTitle>CPU Usage</CardTitle>
                 </CardHeader>
                 <CardContent className="pl-2">
-                  <Livecpu />
+                  <Livecpu temp={container}/>
                 </CardContent>
               </Card>
               <Card className="col-span-4 md:col-span-3">
@@ -265,6 +266,14 @@ export default function page({ params }: { params: { name: string } }) {
             <AccountForm name={container.name} id={params.name}/>
    
           </TabsContent>
+          <TabsContent value="optimize" className="space-y-4">
+          {containerInfo ? <div> {containerInfo.optimization.split("-").map((line, index) => (
+        <li key={index}>{line.trim()}</li>
+      ))} </div>: <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  }
+        
+  
+         </TabsContent>
         </Tabs>
    
       </div>

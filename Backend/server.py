@@ -165,46 +165,46 @@ def delete_item(item_id):
     return jsonify({"message": "Item deleted successfully"})
 
 
-@app.route('/api/send_mail', methods = ["POST"])
-def send_email():
-    smtp_server = 'smtp.gmail.com'
-    smtp_port = 587
-    smtp_username = 'vm5503@gmail.com'
-    smtp_password = 'zztm jcvd hlyj cxaz'
+# @app.route('/api/send_mail', methods = ["POST"])
+# def send_email():
+#     smtp_server = 'smtp.gmail.com'
+#     smtp_port = 587
+#     smtp_username = 'vm5503@gmail.com'
+#     smtp_password = 
 
-    data = request.json
+#     data = request.json
 
-    to_email = data.get('to_email')
-    subject = data.get('subject')
-    body = data.get('body')
-    attachment = data.get('attachment')
+#     to_email = data.get('to_email')
+#     subject = data.get('subject')
+#     body = data.get('body')
+#     attachment = data.get('attachment')
 
-    msg = MIMEMultipart()
-    msg['From'] = smtp_username
-    msg['To'] = to_email
-    msg['Subject'] = subject
+#     msg = MIMEMultipart()
+#     msg['From'] = smtp_username
+#     msg['To'] = to_email
+#     msg['Subject'] = subject
 
-    msg.attach(MIMEText(body, 'plain'))
+#     msg.attach(MIMEText(body, 'plain'))
 
-    if attachment:
-        with open(attachment, 'rb') as file:
-            attach_part = MIMEApplication(file.read(), Name=attachment)
-        attach_part['Content-Disposition'] = f'attachment; filename="{attachment}"'
-        msg.attach(attach_part)
+#     if attachment:
+#         with open(attachment, 'rb') as file:
+#             attach_part = MIMEApplication(file.read(), Name=attachment)
+#         attach_part['Content-Disposition'] = f'attachment; filename="{attachment}"'
+#         msg.attach(attach_part)
 
-    try:
-        server = smtplib.SMTP(smtp_server, smtp_port)
-        server.ehlo()
-        server.starttls()
-        server.ehlo()
-        server.login(smtp_username, smtp_password)
-        server.sendmail(smtp_username, to_email, msg.as_string())
-        server.quit()
-        print(f"Email sent to {to_email}")
-        return jsonify("Asian"), 201
-    except Exception as e:
-        print(f"Failed to send email to {to_email}: {str(e)}")
-        return jsonify("Not Asian"), 201
+#     try:
+#         server = smtplib.SMTP(smtp_server, smtp_port)
+#         server.ehlo()
+#         server.starttls()
+#         server.ehlo()
+#         server.login(smtp_username, smtp_password)
+#         server.sendmail(smtp_username, to_email, msg.as_string())
+#         server.quit()
+#         print(f"Email sent to {to_email}")
+#         return jsonify("Asian"), 201
+#     except Exception as e:
+#         print(f"Failed to send email to {to_email}: {str(e)}")
+#         return jsonify("Not Asian"), 201
     
 
 @app.route('/api/getAll', methods=['GET'])

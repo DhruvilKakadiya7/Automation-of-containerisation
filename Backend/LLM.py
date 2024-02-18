@@ -62,7 +62,12 @@ schema = {
         "suggestions": {
             "type": "string",
             "description": "This suggests what should be done right now to make either the docker container running or to optimise the current state of the container. This should be pointwise with each point on a new line"
+        },
+         "optimization": {
+            "type": "string",
+            "description": "This Analyzes the provided container logs and suggests ways to optimize and improve the docker container health and efficiency, timeframe with least and highest usage and give atleast 3 bulletpoints, each on a new line."
         }
+
     },
     "required": ["logs", "id", "name", "status", "overall_health", "suggestions"],
     "description": "Schema for representing a report generated from Docker logs"
@@ -95,6 +100,9 @@ def reportGeneration(obj):
         b. What is the content of each log message?
         c. (Optional) Is there any source mentioned for each log entry?
         d. Is each log entry from stdout or stderr?
+        
+        5. Improvements and Suggestions
+        Analyze the provided container logs and suggestiion way to optmize and imporve the docker container health and efficiency, timeframe with least and hight usage give atleast 3 bulletpoints
 
         The provided logs are as follows:
         {logs}
