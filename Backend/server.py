@@ -22,6 +22,9 @@ from pathlib import Path
 from flask import Flask
 from slackeventsapi import SlackEventAdapter
 
+from LLM import reportGeneration
+from LLM import generated_script
+
 app = Flask(__name__)
 cors = CORS(app)
 
@@ -33,9 +36,11 @@ data = [
     {"id": 3, "name": "Item 3", "description": "Description of Item 3"}
 ]
 
+
+
 # Routes
 
-random_number = 3000
+random_number = random.randint(3000, 4999)
 
 def trigger_alert(text):
   """
@@ -94,13 +99,14 @@ def get_stats(container_id):
 @app.route('/api/create_website', methods=['POST'])
 def create_item():
     global random_number
-    data = request.json    
-    repo_url = data.get('rep_url')
-    repo_name = re.search(r'\/([^\/]+)\/?$', repo_url).group(1).lower()
-    container_name = f"{repo_name}_container".lower()
+    data = request.form.get('rep_url')
+    repo_url = data
+    repo_name = re.search(r'\/([^\/]+)\/?$', repo_url).group(1).lower() + str(random_number)
+    container_name = f"{repo_name}".lower()
     image_tag = f"{repo_name}_image".lower()
-    port_mapping = f"127.0.0.1:{random_number}:{random_number}"  # You can adjust this as needed
+    port_mapping = f"127.0.0.1:{random_number}:{random_number+5}"  # You can adjust this as needed
     random_number += 1
+
     bash_script =  f"""#!/bin/bash
     
 # Variables
@@ -113,6 +119,12 @@ PORT_MAPPING="{port_mapping}" # Local:Container port mapping (adjust as needed)
 # Clone the GitHub repository
 git clone $GITHUB_REPO_URL repo_dir
 cd repo_dir
+
+if [ ! -f Dockerfile ]; then
+    echo "Dockerfile not found, adding one..."
+    cat << EOF > Dockerfile
+{generated_script}
+fi
     
 # Build your Docker image (assuming the Dockerfile is in the root of the repo)
 docker build -t $REPOSITORY_NAME:$IMAGE_TAG .
@@ -130,10 +142,10 @@ rm -rf repo_dir
         f.write(bash_script)
     
     # Set execute permissions
-    subprocess.run(['chmod', '+x', 'temp_script.sh'])
+    subprocess.run(['chmod', '+x', 'temp_script.sh'],shell=True)
     
     # Execute the bash script
-    subprocess.run(['./temp_script.sh'])
+    subprocess.run(['temp_script.sh'],shell=True)
 
     return jsonify("Hello"), 201
 
@@ -211,6 +223,22 @@ def getAll():
     "container_count": len(containers)
     }
     return jsonify(response_data)
+
+@app.route('/api/getLog/<string:container_id>', methods=['GET'])
+def getLog(container_id):
+    client = docker.from_env()
+    container = client.containers.get(container_id)
+    logs = container.logs()
+    ls = logs.decode('utf-8').split('\n')
+    logs_json = {'logs': ls,
+                 'id': container.id,
+                 'name': container.name,
+                 'status': container.status}
+    return logs_json
+
+@app.route('/api/create_report/<string:container_id>', methods=['GET'])
+def create_report(container_id):
+    return jsonify(reportGeneration(getLog(container_id)))
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -16,8 +16,20 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useEffect, useState } from "react";
-// import { BarChart, Bar,Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { Livecpu } from "@/components/livecpu";
+import { AccountForm } from "@/components/alerts";
+import { Loader2 } from "lucide-react"
 
+// import { BarChart, Bar,Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 interface ChartData {
   name: string;
@@ -26,38 +38,97 @@ interface ChartData {
 
 export default function page({ params }: { params: { name: string } }) {
   const [container, setContainer] = useState({})
-  
+  const [containerInfo, setContainerInfo] = useState(false)
 
   useEffect(() => {
-    fetch(`http://127.0.0.1:5000/api/items/${params.name}`)
+    setInterval(() => {
+
+      fetch(`http://127.0.0.1:5000/api/items/${params.name}`)
+        .then((response) => response.json())
+        .then((data) => {
+          // console.log(newList);
+          setContainer(data);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+          // Handle the error appropriately, e.g., display an error message to the user
+        });
+
+    }, 3000)
+
+
+  }, [])
+
+  const handleDownload = (event) => {
+
+
+    fetch(`http://127.0.0.1:5000/api/create_report/${params.name}`)
       .then((response) => response.json())
       .then((data) => {
-        // console.log(newList);
-        setContainer(data);
+        setContainerInfo(data);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
         // Handle the error appropriately, e.g., display an error message to the user
       });
 
-  }, [])
-  
+  }
+
   return (
     <ScrollArea className="h-full">
       <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
         <div className="flex items-center justify-between space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">
-           {container.name}
+            {container.name}
           </h2>
           <div className="hidden md:flex items-center space-x-2">
             {/* <CalendarDateRangePicker /> */}
-            <Button>Download</Button>
+
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button onClick={handleDownload}>Report</Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[800px]">
+                <DialogHeader>
+                  <DialogTitle>Report</DialogTitle>
+                  <DialogDescription>
+                    The health and details of a Docker container
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  {containerInfo ? <div>
+                    <h2>Container Details</h2>
+                    <ul>
+                      <li>ID: {containerInfo?.id}</li>
+                      <li>Name: {containerInfo?.name}</li>
+                      <li>Status: {containerInfo.status}</li>
+                      <li>Overall Health: {containerInfo.overall_health}</li>
+                      <li>Suggestions: {containerInfo.suggestions}</li>
+                      <h3>Logs</h3>
+                      {containerInfo?.logs?.map((log) => (
+                        <ul key={log?.message}>
+                          <li>LogLevel: {log?.logLevel}</li>
+                          <li>Message: {log?.message}</li>
+                          <li>Source: {log?.source}</li>
+                          <li>Timestamp: {log?.timestamp}</li>
+                        </ul>
+                      ))}
+                    </ul>
+                  </div> : <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  }
+                </div>
+                <DialogFooter>
+                  {containerInfo && <Button type="submit">Download</Button>}
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
           </div>
         </div>
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="alerts" disabled>
+            <TabsTrigger value="alerts">
               Alerts
             </TabsTrigger>
             <TabsTrigger value="optimize" disabled>
@@ -88,10 +159,10 @@ export default function page({ params }: { params: { name: string } }) {
                   </svg>
                 </CardHeader>
                 <CardContent>
-                <Piechart data={[
-    { name: 'CPU Active', value: container.cpu_usage },
-    { name: 'CPU Idle', value: 100-container.cpu_usage},
-  ]}/>
+                  <Piechart data={[
+                    { name: 'CPU Active', value: container.cpu_usage },
+                    { name: 'CPU Idle', value: 100 - container.cpu_usage },
+                  ]} />
                 </CardContent>
               </Card>
               <Card>
@@ -115,12 +186,12 @@ export default function page({ params }: { params: { name: string } }) {
                   </svg>
                 </CardHeader>
                 <CardContent>
-                <Piechart  startAngle={180}
+                  <Piechart startAngle={180}
 
-          endAngle={0} data={[
-    { name: 'Used', value: container.memory_usage },
-    { name: 'Free', value: 7000-container.memory_usage},
-  ]}/>
+                    endAngle={0} data={[
+                      { name: 'Used', value: container.memory_usage },
+                      { name: 'Free', value: 7000 - container.memory_usage },
+                    ]} />
                 </CardContent>
               </Card>
               <Card>
@@ -141,13 +212,13 @@ export default function page({ params }: { params: { name: string } }) {
                   </svg>
                 </CardHeader>
                 <CardContent>
-                <NetChart val1={container.network_io_read} val2={container.network_io_write} />
+                  <NetChart val1={container.network_io_read} val2={container.network_io_write} />
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                   Active Process
+                    Active Process
                   </CardTitle>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -163,7 +234,7 @@ export default function page({ params }: { params: { name: string } }) {
                   </svg>
                 </CardHeader>
                 <CardContent>
-               <h1 className="font-bold text-5xl">{container.process_count}</h1>
+                  <h1 className="font-bold text-5xl">{container.process_count}</h1>
                 </CardContent>
               </Card>
             </div>
@@ -173,7 +244,7 @@ export default function page({ params }: { params: { name: string } }) {
                   <CardTitle>Overview</CardTitle>
                 </CardHeader>
                 <CardContent className="pl-2">
-                  <Overview />
+                  <Livecpu />
                 </CardContent>
               </Card>
               <Card className="col-span-4 md:col-span-3">
@@ -189,7 +260,13 @@ export default function page({ params }: { params: { name: string } }) {
               </Card>
             </div>
           </TabsContent>
+          <TabsContent value="alerts" className="space-y-4">
+           
+            <AccountForm/>
+   
+          </TabsContent>
         </Tabs>
+   
       </div>
     </ScrollArea>
   );

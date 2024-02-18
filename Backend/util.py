@@ -68,7 +68,7 @@ def get_container_stats(container_id):
     client = docker.from_env()
     container = client.containers.get(container_id)
     cpu_stats = container.stats(stream=False)
-    print(cpu_stats)
+    # print(cpu_stats)
     r,t = calculate_network_bytes(cpu_stats)
     return {
         "name": container.name,
